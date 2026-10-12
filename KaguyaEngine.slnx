@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="KaguyaEngine.vcxproj" Id="c7654a84-b6d9-4128-96c2-1a164e80813d" />
+  <Project Path="KaguyaGame/KaguyaGame.vcxproj" Id="307bc645-b5c9-44b0-b079-3e151d13e027" />
+</Solution>

@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Source\Scenes">
+      <UniqueIdentifier>{8c5e0f9c-5e48-4063-9112-6844f6f3950f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Scenes\SceneBase">
+      <UniqueIdentifier>{5c4dd966-617d-484f-af53-0b690fe73b01}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\System">
+      <UniqueIdentifier>{7f5b8688-2076-406b-9887-f222942b7d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Scenes\SceneClear">
+      <UniqueIdentifier>{2730a478-cb63-469c-a8f1-a07a0af546cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Scenes\SceneDebug">
+      <UniqueIdentifier>{91f84352-6350-41d6-b12c-d40fec95b90b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Scenes\SceneGame">
+      <UniqueIdentifier>{0c3f30ad-91ba-4168-9082-08e30b7ca92c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Scenes\SceneGameover">
+      <UniqueIdentifier>{1635044f-4782-4f3d-aada-d8e40120366b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Scenes\SceneInit">
+      <UniqueIdentifier>{f152dce3-d5af-4210-bed2-c33ff7db4e42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Scenes\SceneTitle">
+      <UniqueIdentifier>{0f6d4412-61c1-46c4-8a56-5ad6815f3631}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Source\Scenes\SceneBase\SceneBase.h">
+      <Filter>Source\Scenes\SceneBase</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\GameBase.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\System\GameManager.h">
+      <Filter>Source\System</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scenes\SceneTitle\SceneTitle.h">
+      <Filter>Source\Scenes\SceneTitle</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scenes\SceneInit\SceneInit.h">
+      <Filter>Source\Scenes\SceneInit</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scenes\SceneGameover\SceneGameover.h">
+      <Filter>Source\Scenes\SceneGameover</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scenes\SceneGame\SceneGame.h">
+      <Filter>Source\Scenes\SceneGame</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scenes\SceneDebug\SceneDebug.h">
+      <Filter>Source\Scenes\SceneDebug</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scenes\SceneClear\SceneClear.h">
+      <Filter>Source\Scenes\SceneClear</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Source\Scenes\SceneBase\SceneBase.cpp">
+      <Filter>Source\Scenes\SceneBase</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Main.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\GameManager.cpp">
+      <Filter>Source\System</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scenes\SceneTitle\SceneTitle.cpp">
+      <Filter>Source\Scenes\SceneTitle</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scenes\SceneInit\SceneInit.cpp">
+      <Filter>Source\Scenes\SceneInit</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scenes\SceneGameover\SceneGameover.cpp">
+      <Filter>Source\Scenes\SceneGameover</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scenes\SceneGame\SceneGame.cpp">
+      <Filter>Source\Scenes\SceneGame</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scenes\SceneDebug\SceneDebug.cpp">
+      <Filter>Source\Scenes\SceneDebug</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scenes\SceneClear\SceneClear.cpp">
+      <Filter>Source\Scenes\SceneClear</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
