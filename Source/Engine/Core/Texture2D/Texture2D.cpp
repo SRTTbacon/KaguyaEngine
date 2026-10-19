@@ -530,6 +530,10 @@ namespace KaguyaEngine::Texture
 					pThis->m_pManage->bLoaded.store(true);
 				}
 				pUploadBuffer->Release();
+
+				if (pThis->m_onLoaded) {
+					pThis->m_onLoaded();
+				}
 			};
 		LockMutex lock(g_copyJobManager->m_mutex);
 		g_copyJobManager->m_jobs.push_back(copyJob);

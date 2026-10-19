@@ -122,8 +122,6 @@ namespace KaguyaEngine::Material
 			return;
 		}
 
-		// UniquePSBufferはメッシュに左右されないため先に実行
-		GetCommandList()->SetGraphicsRootConstantBufferView(3, m_pUniquePSBuffer[*m_pCurrentBackBufferIndex]->GetGPUVirtualAddress());
 		if (m_textureRootIndex >= 0)
 		{
 			if (m_textures[0].copyDescriptorIndex != UINT32_MAX) {
@@ -312,8 +310,6 @@ namespace KaguyaEngine::Material
 
 		// 各マテリアル固有のパラメーター
 		param.InitAsConstantBufferView(1, 1, D3D12_SHADER_VISIBILITY_VERTEX);
-		rootParameters.push_back(param);
-		param.InitAsConstantBufferView(1, 1, D3D12_SHADER_VISIBILITY_PIXEL);
 		rootParameters.push_back(param);
 	}
 

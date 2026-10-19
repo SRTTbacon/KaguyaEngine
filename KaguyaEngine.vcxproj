@@ -37,6 +37,10 @@
     </ClInclude>
     <ClInclude Include="Source\Engine\3D\Material\Core\MaterialBase.h" />
     <ClInclude Include="Source\Engine\3D\Material\Core\MaterialManager.h" />
+    <ClInclude Include="Source\Engine\3D\Material\OtherMaterials\MovieMaterial.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="Source\Engine\3D\Material\PrimitiveMaterial.h">
       <SubType>
       </SubType>
@@ -52,6 +56,10 @@
     <ClInclude Include="Source\Engine\3D\Model\Core\Mesh.h" />
     <ClInclude Include="Source\Engine\3D\Model\Core\ModelBase.h" />
     <ClInclude Include="Source\Engine\3D\Model\Core\ModelManager.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\3D\Model\OtherModels\MovieModel.h">
       <SubType>
       </SubType>
     </ClInclude>
@@ -140,12 +148,14 @@
     <ClCompile Include="Source\Engine\3D\Material\BoneMaterial.cpp" />
     <ClCompile Include="Source\Engine\3D\Material\Core\MaterialBase.cpp" />
     <ClCompile Include="Source\Engine\3D\Material\Core\MaterialManager.cpp" />
+    <ClCompile Include="Source\Engine\3D\Material\OtherMaterials\MovieMaterial.cpp" />
     <ClCompile Include="Source\Engine\3D\Material\PrimitiveMaterial.cpp" />
     <ClCompile Include="Source\Engine\3D\Model\CharacterModel.cpp" />
     <ClCompile Include="Source\Engine\3D\Model\Core\Bone.cpp" />
     <ClCompile Include="Source\Engine\3D\Model\Core\Mesh.cpp" />
     <ClCompile Include="Source\Engine\3D\Model\Core\ModelBase.cpp" />
     <ClCompile Include="Source\Engine\3D\Model\Core\ModelManager.cpp" />
+    <ClCompile Include="Source\Engine\3D\Model\OtherModels\MovieModel.cpp" />
     <ClCompile Include="Source\Engine\3D\Model\PrimitiveModel.cpp" />
     <ClCompile Include="Source\Engine\3D\PostProcess\AntiAliasing\TAA.cpp" />
     <ClCompile Include="Source\Engine\3D\PostProcess\Core\PostProcessBase.cpp" />
@@ -296,6 +306,12 @@
     <FxCompile Include="Source\Shaders\Render\MainRenderVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\Render\MoviePS.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
     <FxCompile Include="Source\Shaders\UI\UITexturePS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

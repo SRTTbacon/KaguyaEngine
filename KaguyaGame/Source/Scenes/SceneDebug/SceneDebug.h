@@ -38,6 +38,7 @@ private:
 
 	ObjectPtr<PrimitiveModel> m_pModel1;
 	ObjectPtr<PrimitiveModel> m_pModel2;
+	ObjectPtr<MovieModel> m_pMovieModel1;
 
 	ObjectPtr<CharacterModel> m_pCharacter1;
 };

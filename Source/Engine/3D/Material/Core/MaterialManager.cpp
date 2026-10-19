@@ -37,13 +37,15 @@ namespace KaguyaEngine::Material
 
 		// 頂点シェーダー用
 		CD3DX12_RESOURCE_DESC constantVSData = CD3DX12_RESOURCE_DESC::Buffer((sizeof(CommonVSBuffer) + 255) & ~255);
-		for (int i = 0; i < FRAME_BUFFER_COUNT; i++) {
+		for (int i = 0; i < FRAME_BUFFER_COUNT; i++)
+		{
 			CreateConstantBuffer(constantVSData, m_pCommonVSBuffers[0][i], &m_pCommonVSBufferMapped[0][i]);
 		}
 
 		// ピクセルシェーダー用
 		CD3DX12_RESOURCE_DESC constantPSData = CD3DX12_RESOURCE_DESC::Buffer((sizeof(CommonPSBuffer) + 255) & ~255);
-		for (int i = 0; i < FRAME_BUFFER_COUNT; i++) {
+		for (int i = 0; i < FRAME_BUFFER_COUNT; i++)
+		{
 			CreateConstantBuffer(constantPSData, m_pCommonPSBuffers[0][i], &m_pCommonPSBufferMapped[0][i]);
 		}
 	}
@@ -100,7 +102,8 @@ namespace KaguyaEngine::Material
 
 	void MaterialManager::LateUpdate(Camera* pCamera, KaguyaEngine::Light::DirectionalLight* pLight, uint32 cameraIndex)
 	{
-		if (cameraIndex >= m_pCommonVSBuffers.size()) {
+		if (cameraIndex >= m_pCommonVSBuffers.size())
+		{
 			return;
 		}
 
@@ -127,14 +130,16 @@ namespace KaguyaEngine::Material
 
 	void MaterialManager::Draw(uint32 cameraIndex)
 	{
-		if (cameraIndex >= m_pCommonVSBuffers.size()) {
+		if (cameraIndex >= m_pCommonVSBuffers.size())
+		{
 			return;
 		}
 
 		for (const std::pair<uint64, std::vector<MaterialBase*>> opaquePair : m_sharedOpaquePipelines)
 		{
 			// 恐らくありえないが、パイプラインが存在しなければ無視
-			if (g_pipelineStateCache.find(opaquePair.first) == g_pipelineStateCache.end()) {
+			if (g_pipelineStateCache.find(opaquePair.first) == g_pipelineStateCache.end())
+			{
 				continue;
 			}
 
@@ -146,8 +151,10 @@ namespace KaguyaEngine::Material
 			GetCommandList()->SetGraphicsRootConstantBufferView(1, m_pCommonPSBuffers[cameraIndex][*m_pCurrentBackBufferIndex]->GetGPUVirtualAddress());
 
 			// このパイプラインに登録されているマテリアルをすべて描画
-			for (MaterialBase* pMaterial : opaquePair.second) {
-				if (pMaterial->IsCanDraw()) {
+			for (MaterialBase* pMaterial : opaquePair.second)
+			{
+				if (pMaterial->IsCanDraw())
+				{
 					pMaterial->Draw();
 				}
 			}
@@ -161,25 +168,32 @@ namespace KaguyaEngine::Material
 		}
 
 		// もともと配置されていたパイプラインから削除
-		if (beforeHashID != 0){
-			if (m_sharedOpaquePipelines.find(beforeHashID) != m_sharedOpaquePipelines.end()) {
+		if (beforeHashID != 0)
+		{
+			if (m_sharedOpaquePipelines.find(beforeHashID) != m_sharedOpaquePipelines.end())
+			{
 				std::erase(m_sharedOpaquePipelines[beforeHashID], pMaterial);
 			}
-			else if (m_sharedTransparentPipelines.find(beforeHashID) != m_sharedTransparentPipelines.end()) {
+			else if (m_sharedTransparentPipelines.find(beforeHashID) != m_sharedTransparentPipelines.end())
+			{
 				std::erase(m_sharedTransparentPipelines[beforeHashID], pMaterial);
 			}
 		}
 
 		// 新しいパイプラインに配置
-		if (pMaterial->GetEnableTransparent()) {
+		if (pMaterial->GetEnableTransparent())
+		{
 			std::vector<MaterialBase*>& sharedPipeline = m_sharedTransparentPipelines[afterHashID];
-			if (std::find(sharedPipeline.begin(), sharedPipeline.end(), pMaterial) == sharedPipeline.end()) {
+			if (std::find(sharedPipeline.begin(), sharedPipeline.end(), pMaterial) == sharedPipeline.end())
+			{
 				sharedPipeline.push_back(pMaterial);
 			}
 		}
-		else {
+		else
+		{
 			std::vector<MaterialBase*>& sharedPipeline = m_sharedOpaquePipelines[afterHashID];
-			if (std::find(sharedPipeline.begin(), sharedPipeline.end(), pMaterial) == sharedPipeline.end()) {
+			if (std::find(sharedPipeline.begin(), sharedPipeline.end(), pMaterial) == sharedPipeline.end())
+			{
 				sharedPipeline.push_back(pMaterial);
 			}
 		}
@@ -190,7 +204,8 @@ namespace KaguyaEngine::Material
 		D3D12_HEAP_PROPERTIES heapProps(D3D12_HEAP_TYPE_UPLOAD);
 		HRESULT hr = m_pDevice->CreateCommittedResource(&heapProps, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr, IID_PPV_ARGS(pOutResource.ReleaseAndGetAddressOf()));
 
-		if (FAILED(hr)) {
+		if (FAILED(hr))
+		{
 			FatalError("コンスタントバッファの生成に失敗");
 		}
 

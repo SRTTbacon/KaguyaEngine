@@ -18,7 +18,7 @@ struct PSOutput
 // #define COMMON_BUFFER_DEFINED を宣言してください。
 #ifndef COMMON_BUFFER_DEFINED
 #define COMMON_BUFFER_DEFINED
-cbuffer UniquePSBuffer : register(b1, space1)
+cbuffer UniquePSBuffer : register(b0, space1)
 {
     UniquePSStruct commonBuffer;
 };

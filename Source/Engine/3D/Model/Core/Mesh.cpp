@@ -118,4 +118,28 @@ namespace KaguyaEngine::Model
 	{
 		memcpy(m_pMeshConstantBufferMapped[*m_pCurrentBackBufferIndex], m_pMeshBufferData.get(), m_bufferSize);
 	}
+
+	// ------------------------------PrimitiveMesh------------------------------
+
+	PrimitiveMesh::PrimitiveMesh(ID3D12Device* pDevice, uint32 meshIndex)
+		: Mesh(pDevice, meshIndex)
+	{}
+
+	PrimitiveMesh::~PrimitiveMesh()
+	{}
+
+	void PrimitiveMesh::CreateConstantBuffer()
+	{
+		Mesh::CreateConstantBuffer<MeshConstantBuffer>(sizeof(MeshConstantBuffer));
+	}
+
+	void PrimitiveMesh::LateUpdate()
+	{
+		//描画フラグが立っていない場合は更新しない
+		if (!CanDraw() && !CanDrawShadow()) {
+			return;
+		}
+
+		Mesh::LateUpdate();
+	}
 }

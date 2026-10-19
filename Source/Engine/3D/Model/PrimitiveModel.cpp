@@ -22,33 +22,7 @@ using namespace KaguyaEngine::AsyncTask;
 using namespace DirectX;
 
 namespace KaguyaEngine::Model
-{
-	// ------------------------------PrimitiveMesh------------------------------
-
-    PrimitiveMesh::PrimitiveMesh(ID3D12Device* pDevice, uint32 meshIndex)
-        : Mesh(pDevice, meshIndex)
-    {
-    }
-
-    PrimitiveMesh::~PrimitiveMesh()
-    {
-    }
-
-    void PrimitiveMesh::CreateConstantBuffer()
-    {
-        Mesh::CreateConstantBuffer<MeshConstantBuffer>(sizeof(MeshConstantBuffer));
-    }
-
-    void PrimitiveMesh::LateUpdate()
-    {
-        //描画フラグが立っていない場合は更新しない
-        if (!CanDraw() && !CanDrawShadow()) {
-            return;
-        }
-
-        Mesh::LateUpdate();
-    }
-    
+{    
     // ------------------------------FBXModel------------------------------
 
 	void PrimitiveModel::LoadModel(const std::string& modelPath)

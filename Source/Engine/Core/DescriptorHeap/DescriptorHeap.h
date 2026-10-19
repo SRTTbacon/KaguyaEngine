@@ -50,8 +50,6 @@ namespace KaguyaEngine::Core
 		uint32 SetUAVResource(ID3D12Resource* pResource, DXGI_FORMAT format, uint32 offset = UINT32_MAX);
 		uint32 SetResource(ID3D12Resource* pResource, const D3D12_SHADER_RESOURCE_VIEW_DESC& shaderResource, uint32 offset = UINT32_MAX);
 		uint32 SetUAVResource(ID3D12Resource* pResource, D3D12_UNORDERED_ACCESS_VIEW_DESC& shaderResource, uint32 offset = UINT32_MAX);
-		uint32 SetMainTexture(ID3D12Resource* mainTex, ID3D12Resource* normalMap);
-		uint32 SetUserTexture(ID3D12Resource* tex, int position, D3D12_SRV_DIMENSION dimension);
 
 		void ClearDescriptor(uint32 offset);
 		void ClearAllDescriptors();
@@ -78,8 +76,5 @@ namespace KaguyaEngine::Core
 		D3D12_DESCRIPTOR_HEAP_TYPE m_heapType;
 
 		std::vector<bool> m_descriptorUsage;    // ディスクリプタの使用状況を管理するベクター
-
-		// シェーダーリソースビューを作成するヘルパー関数
-		void CreateShaderResourceView(ID3D12Resource* pResource, D3D12_CPU_DESCRIPTOR_HANDLE& cpuHandle);
 	};
 }

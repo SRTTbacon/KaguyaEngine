@@ -38,6 +38,7 @@ namespace KaguyaEngine
 	namespace Core
 	{
 		struct CopyDescriptor;
+		class VideoAcceration;
 	}
 	namespace Material
 	{
@@ -91,6 +92,9 @@ public:
 	inline KaguyaEngine::Light::DirectionalLight* GetDirectionalLight() const { return m_pDirectionalLight.get(); }
 	inline KaguyaEngine::SkyBox* GetSkyBox() const { return m_pSkyBox.get(); }
 
+	//ビデオアクセラレーション用のクラスを取得
+	inline KaguyaEngine::Core::VideoAcceration* GetVideoAcceration() { return m_pVideoAcceration.get(); }
+
 	DirectXDevice* GetDirectXDevice() { return &m_directXDevice; }
 
 	inline FrameResource* GetFrameResource() { return &m_frameResource; }
@@ -122,6 +126,7 @@ private:	// -----ウィンドウに関連する変数-----
 	ObjectPtr<KaguyaEngine::Material::MaterialManager> m_pMaterialManager;
 	ObjectPtr<KaguyaEngine::Model::ModelManager> m_pModelManager;
 	ObjectPtr<KaguyaEngine::UI::UIManager> m_pUIManager;
+	ObjectPtr<KaguyaEngine::Core::VideoAcceration> m_pVideoAcceration;
 	ObjectPtr<KaguyaEngine::Light::DirectionalLight> m_pDirectionalLight;
 	ObjectPtr<KaguyaEngine::Input> m_pInput;
 	ObjectPtr<KaguyaEngine::SkyBox> m_pSkyBox;

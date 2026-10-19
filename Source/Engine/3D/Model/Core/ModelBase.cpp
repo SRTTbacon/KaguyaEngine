@@ -73,6 +73,62 @@ namespace KaguyaEngine::Model
         m_onLoaded = std::move(callback);
     }
 
+    void ModelBase::CreatePrimitiveQuad()
+    {
+        //クアッドモデル
+        std::vector<XMFLOAT3> vertices =
+        {
+            { -1.0f,  1.0f, 0.0f}, // 左上
+            {  1.0f,  1.0f, 0.0f}, // 右上
+            { -1.0f, -1.0f, 0.0f}, // 左下
+            {  1.0f, -1.0f, 0.0f}, // 右下
+        };
+        XMFLOAT2 uvs[] =
+        {
+            { 0.0f, 0.0f },
+            { 1.0f, 0.0f },
+            { 0.0f, 1.0f },
+            { 1.0f, 1.0f }
+        };
+
+        std::vector<VertexPrimitive> vertexList;
+        std::vector<uint32> indices
+        {
+            0,1,2,  2,1,3,  2,1,0,  3,1,2
+        };
+
+        //頂点の処理
+        for (size_t i = 0; i < vertices.size(); i++)
+        {
+            VertexPrimitive vertex{};
+
+            vertex.position = vertices[i];
+            vertex.normal = XMFLOAT3(0.0f, 1.0f, 0.0f);
+            vertex.texCoords = uvs[i];
+            vertex.tangent = XMFLOAT3(0.0f, 1.0f, 0.0f);
+            vertex.bitangent = XMFLOAT3(0.0f, 1.0f, 0.0f);
+
+            vertex.vertexID = static_cast<uint32>(i);
+
+            vertexList.push_back(vertex);
+        }
+
+        ObjectPtr<PrimitiveMesh> pMesh = CreateObjectPtr<PrimitiveMesh>(m_pDevice, 0);
+        pMesh->SetFrameResource(this);
+        pMesh->CreateConstantBuffer();
+        pMesh->m_meshName = "PrimitiveQuad";
+
+        bool bExistMesh = CreateBuffer<MeshData>(pMesh.get(), vertexList, indices, sizeof(VertexPrimitive), 0);
+
+        m_pMeshes.push_back(pMesh);
+
+        if (!bExistMesh)
+        {
+            pMesh->m_pMeshData->vertices = vertices;
+            pMesh->m_pMeshData->indices = indices;
+        }
+    }
+
     uint8 ModelBase::GetNeedMeshCount(const aiNode* pNode)
     {
         int count = 0;

@@ -10,6 +10,7 @@
 namespace KaguyaEngine::Core
 {
 	Map<uint64, ComPtr<ID3D12RootSignature>> g_rootSignatureCache;
+	std::mutex g_rootSignatureCacheMutex;
 	Map<uint64, PsoInfo> g_pipelineStateCache;
 
 	PsoDescKey::PsoDescKey()

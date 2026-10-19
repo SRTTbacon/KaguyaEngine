@@ -42,6 +42,10 @@ namespace KaguyaEngine::Model
         virtual void Update() {};
         // シーンのUpdateより後に実行される
 		virtual void LateUpdate();
+		// シーンのDraw()より前に実行される
+		virtual void BeforeDrawUpdate() {};
+		// シーンのDraw()より後に実行される
+		virtual void AfterDrawUpdate() {};
 
         void SetOnLoaded(std::function<void()> callback);
 
@@ -93,6 +97,9 @@ namespace KaguyaEngine::Model
         template <typename T, typename VertexType>
         requires std::derived_from<T, MeshData>
 		bool CreateBuffer(Mesh* pMesh, std::vector<VertexType>& vertices, std::vector<uint32>& indices, uint32 vertexStructSize, uint32 meshIndex);
+
+        // クアッドモデルを作成
+        void CreatePrimitiveQuad();
 
         // ロード予定のメッシュ数を取得
         uint8 GetNeedMeshCount(const aiNode* pNode);

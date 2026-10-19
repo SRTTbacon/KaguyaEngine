@@ -36,6 +36,8 @@ namespace KaguyaEngine::Model
 
 		void Update();
 		void LateUpdate();
+		void BeforeDrawUpdate();
+		void AfterDrawUpdate();
 
 	private:
 		std::vector<ObjectPtr<ModelBase>> m_pModels;

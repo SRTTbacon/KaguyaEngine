@@ -34,4 +34,18 @@ namespace KaguyaEngine::Model
 			pModel->LateUpdate();
 		}
 	}
+
+	void ModelManager::BeforeDrawUpdate()
+	{
+		for (ObjectPtr<ModelBase>& pModel : m_pModels) {
+			pModel->BeforeDrawUpdate();
+		}
+	}
+
+	void ModelManager::AfterDrawUpdate()
+	{
+		for (ObjectPtr<ModelBase>& pModel : m_pModels) {
+			pModel->AfterDrawUpdate();
+		}
+	}
 }

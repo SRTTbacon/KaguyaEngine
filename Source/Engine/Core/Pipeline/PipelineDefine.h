@@ -73,6 +73,7 @@ namespace KaguyaEngine::Core
 	// MaterialManagerのデストラクタで解放
 	// key : GetShaderHash()の値
 	extern Map<uint64, ComPtr<ID3D12RootSignature>> g_rootSignatureCache;
+	extern std::mutex g_rootSignatureCacheMutex;
 	// パイプラインステートのキャッシュ
 	// MaterialManagerのデストラクタで解放
 	// key : PsoDescKey::GetHash()の値

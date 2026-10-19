@@ -4,6 +4,7 @@
 #include "Core\\Thread\\WorkerThread.h"
 #include "Core\\Thread\\MainThreadWorker.h"
 #include "Core\\DescriptorHeap\\DescriptorHeap.h"
+#include "Core\\Movie\\VideoAcceration.h"
 #include "UI\\UIManager.h"
 #include "3D\\Camera\\Camera.h"
 #include "3D\\Material\\Core\\MaterialManager.h"
@@ -122,8 +123,14 @@ bool Engine::Initialize()
 	*/
 	// マテリアルマネージャーを初期化
 	m_pMaterialManager = CreateObjectPtr<MaterialManager>(&m_frameResource);
+	// モデルマネージャーを初期化
 	m_pModelManager = CreateObjectPtr<ModelManager>(&m_frameResource);
+	// ディレクショナルライトを初期化
 	m_pDirectionalLight = CreateObjectPtr<DirectionalLight>();
+	// ビデオアクセラレーションを初期化
+	m_pVideoAcceration = CreateObjectPtr<VideoAcceration>();
+	m_pVideoAcceration->Initialize(m_directXDevice.GetDevice(), m_directXDevice.GetQueue());
+
 	// キーボード、Padの初期化
 	m_pInput = CreateObjectPtr<Input>(m_hWnd);
 	// スカイボックスを初期化
@@ -191,6 +198,8 @@ void Engine::Update()
 
 	// コマンドリストをリセット
 	m_directXDevice.BeginFrame();
+
+	m_pVideoAcceration->BeginVideoCommand();
 
 	// フレームの時間計測
 	m_cpuFrameStart = std::chrono::high_resolution_clock::now();
@@ -345,6 +354,12 @@ void Engine::Begin3DRender()
 	ID3D12DescriptorHeap* ppHeaps[] = { m_pCopyDescriptor->pCopyHeap->GetHeap() };
 	GetCommandList()->SetDescriptorHeaps(1, ppHeaps);
 
+	// 動画のデコード処理を実行
+	m_pVideoAcceration->EndVideoCommand();
+
+	// 3Dモデルの描画前に行う処理
+	m_pModelManager->BeforeDrawUpdate();
+
 	for (uint32 cameraIndex = 0; cameraIndex < static_cast<uint32>(m_pSortedCameras.size()); cameraIndex++)
 	{
 		m_pMaterialManager->LateUpdate(m_pSortedCameras[cameraIndex].get(), m_pDirectionalLight.get(), cameraIndex);
@@ -362,6 +377,9 @@ void Engine::Begin3DRender()
 		// スカイボックスの描画
 		m_pSkyBox->Draw(cameraIndex);
 	}
+
+	// 3Dモデルの描画後に行う処理
+	m_pModelManager->AfterDrawUpdate();
 }
 
 void Engine::Begin2DRender()

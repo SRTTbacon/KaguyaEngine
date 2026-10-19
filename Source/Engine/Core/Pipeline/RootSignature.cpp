@@ -17,6 +17,9 @@ namespace KaguyaEngine::Core
 	}
 	void RootSignature::Initialize(ID3D12Device* pDevice, uint64 shaderHash, D3D12_ROOT_PARAMETER* pRootParameters, uint32 numRootParameters, D3D12_STATIC_SAMPLER_DESC* pSamplers, uint32 numSamplers)
 	{
+		// g_rootSignatureCacheMutex は全アクセス箇所で共有する
+		std::lock_guard<std::mutex> lock(g_rootSignatureCacheMutex);
+
 		if (g_rootSignatureCache.find(shaderHash) != g_rootSignatureCache.end())
 		{
 			m_pRootSignature = g_rootSignatureCache[shaderHash].Get();
@@ -57,17 +60,22 @@ namespace KaguyaEngine::Core
 
 		g_rootSignatureCache.try_emplace(shaderHash);
 
+		ComPtr<ID3D12RootSignature> rootSignature;
+
 		// ルートシグネチャ生成
 		hr = pDevice->CreateRootSignature(
 			0,										// GPUが複数ある場合のノードマスク（基本1つのため0を指定）
 			pBlob->GetBufferPointer(),				// シリアライズしたデータのポインタ
 			pBlob->GetBufferSize(),					// シリアライズしたデータのサイズ
-			IID_PPV_ARGS(&g_rootSignatureCache[shaderHash]));		// ルートシグニチャ格納先のポインタ
+			IID_PPV_ARGS(&rootSignature));		// 格納先のポインタ
 		if (FAILED(hr))
 		{
 			HRESULT hr2 = pDevice->GetDeviceRemovedReason();
 			printf("ルートシグネチャの生成に失敗。 %u, %u, シェーダー : %s\n", (uint32)hr, (uint32)hr2, "");
 		}
+
+		g_rootSignatureCache.try_emplace(shaderHash);
+		g_rootSignatureCache[shaderHash] = rootSignature;
 
 		m_pRootSignature = g_rootSignatureCache[shaderHash].Get();
 		m_shaderHash = shaderHash;

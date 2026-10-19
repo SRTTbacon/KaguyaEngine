@@ -220,4 +220,16 @@ namespace KaguyaEngine::Model
         m_pMeshBufferData = CreateObjectPtr<T>();
         m_bufferSize = bufferSize;
     }
+
+    // -------------------------------PrimitiveMesh------------------------------
+
+    // デフォルトモデル用のメッシュクラス
+    class PrimitiveMesh : public Mesh
+    {
+    public:
+        PrimitiveMesh(ID3D12Device* pDevice, uint32 meshIndex);
+        virtual ~PrimitiveMesh() override;
+        virtual void CreateConstantBuffer() override;
+        virtual void LateUpdate() override;
+    };
 }

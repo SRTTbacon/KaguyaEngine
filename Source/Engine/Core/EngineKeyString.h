@@ -23,6 +23,7 @@ namespace KaguyaEngine::KeyString
 	inline static const std::string SHADER_MODEL_PRIMITIVE_PS = GetShaderPath("PrimitivePS.cso");
 	inline static const std::string SHADER_MODEL_CHARACTER_VS = GetShaderPath("BoneVS.cso");
 	inline static const std::string SHADER_MODEL_CHARACTER_PS = GetShaderPath("BonePS.cso");
+	inline static const std::string SHADER_MODEL_MOVIE_PS = GetShaderPath("MoviePS.cso");
 
 	inline static const std::string SHADER_SKYBOX_VS = GetShaderPath("SkyBoxVS.cso");
 	inline static const std::string SHADER_SKYBOX_PS = GetShaderPath("SkyBoxPS.cso");

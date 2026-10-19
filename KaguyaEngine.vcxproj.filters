@@ -116,6 +116,12 @@
     <Filter Include="Source\Engine\Core\Movie">
       <UniqueIdentifier>{fb3e3e6f-3ea2-4cb1-b039-5599290e7cbd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source\Engine\3D\Model\OtherModels">
+      <UniqueIdentifier>{14b5b3bb-c1fd-4a92-9c0e-b0203a028bf3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\Engine\3D\Material\OtherMaterials">
+      <UniqueIdentifier>{6ec9d6ff-e6a9-409b-b79f-c5dd4b6de24e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Engine\Core\CoreMinimal.h">
@@ -280,6 +286,12 @@
     <ClInclude Include="Source\Engine\Core\Movie\VideoAcceration.h">
       <Filter>Source\Engine\Core\Movie</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Engine\3D\Model\OtherModels\MovieModel.h">
+      <Filter>Source\Engine\3D\Model\OtherModels</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Engine\3D\Material\OtherMaterials\MovieMaterial.h">
+      <Filter>Source\Engine\3D\Material\OtherMaterials</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Engine\Core\Main\Main.cpp">
@@ -426,6 +438,12 @@
     <ClCompile Include="Source\Engine\Core\Movie\VideoAcceration.cpp">
       <Filter>Source\Engine\Core\Movie</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Engine\3D\Model\OtherModels\MovieModel.cpp">
+      <Filter>Source\Engine\3D\Model\OtherModels</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Engine\3D\Material\OtherMaterials\MovieMaterial.cpp">
+      <Filter>Source\Engine\3D\Material\OtherMaterials</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Source\Shaders\UI\UITextureVS.hlsl">
@@ -490,6 +508,9 @@
     </FxCompile>
     <FxCompile Include="Source\Shaders\PostProcess\IntelTAA\TAAResolveCS.hlsl">
       <Filter>リソース ファイル\PostProcess\IntelTAA</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\Render\MoviePS.hlsl">
+      <Filter>リソース ファイル\Render</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

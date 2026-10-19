@@ -119,44 +119,6 @@ namespace KaguyaEngine::Core
         return offsetIndex;
     }
 
-    uint32 DescriptorHeap::SetMainTexture(ID3D12Resource* mainTex, ID3D12Resource* normalMap)
-    {
-        //各マテリアルにテクスチャを割り当てる
-
-        D3D12_CPU_DESCRIPTOR_HANDLE cpuDescriptorHandle = m_pDescriptorHeap->GetCPUDescriptorHandleForHeapStart();
-		uint32 offset = GetNextAvailableDescriptor();
-        cpuDescriptorHandle.ptr += m_descriptorSize * static_cast<unsigned long long>(offset);
-
-        //メインテクスチャ
-        if (mainTex) {
-            CreateShaderResourceView(mainTex, cpuDescriptorHandle);
-        }
-
-        //1つ進めてノーマルマップ
-        cpuDescriptorHandle.ptr += m_descriptorSize;
-        if (normalMap) {
-            CreateShaderResourceView(normalMap, cpuDescriptorHandle);
-        }
-
-        return offset;
-    }
-
-    uint32 DescriptorHeap::SetUserTexture(ID3D12Resource* tex, int position, D3D12_SRV_DIMENSION dimension)
-    {
-        if (tex) {
-            D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-            srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-            srvDesc.ViewDimension = dimension;
-            srvDesc.Format = tex->GetDesc().Format;
-            srvDesc.Texture2D.MipLevels = 1;
-            srvDesc.Texture2D.MostDetailedMip = 0;
-            srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
-
-            return SetResource(tex, srvDesc);
-        }
-		return UINT32_MAX;
-    }
-
     void DescriptorHeap::ClearDescriptor(uint32 offset)
     {
         if (offset >= m_descriptorUsage.size()) {
@@ -190,43 +152,6 @@ namespace KaguyaEngine::Core
     ID3D12DescriptorHeap* DescriptorHeap::GetHeap() const
     {
         return m_pDescriptorHeap.Get();
-    }
-
-    void DescriptorHeap::CreateShaderResourceView(ID3D12Resource* pResource, D3D12_CPU_DESCRIPTOR_HANDLE& cpuHandle)
-    {
-        if (pResource->GetDesc().Format == DXGI_FORMAT_NV12) {
-            // Y Plane SRV
-            D3D12_SHADER_RESOURCE_VIEW_DESC srvDescY = {};
-            srvDescY.Format = DXGI_FORMAT_R8_UNORM;
-            srvDescY.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-            srvDescY.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-            srvDescY.Texture2D.MipLevels = 1;
-            srvDescY.Texture2D.MostDetailedMip = 0;
-            srvDescY.Texture2D.PlaneSlice = 0; // Y面
-
-            m_pDevice->CreateShaderResourceView(pResource, &srvDescY, cpuHandle);
-
-            cpuHandle.ptr += m_descriptorSize;
-
-            // UV Plane SRV
-            D3D12_SHADER_RESOURCE_VIEW_DESC srvDescUV = {};
-            srvDescUV.Format = DXGI_FORMAT_R8G8_UNORM;
-            srvDescUV.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-            srvDescUV.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-            srvDescUV.Texture2D.MipLevels = 1;
-            srvDescUV.Texture2D.MostDetailedMip = 0;
-            srvDescUV.Texture2D.PlaneSlice = 1; // UV面 (重要！)
-
-            m_pDevice->CreateShaderResourceView(pResource, &srvDescUV, cpuHandle);
-        }
-        else {
-            D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-            srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-            srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-            srvDesc.Format = pResource->GetDesc().Format;
-            srvDesc.Texture2D.MipLevels = pResource->GetDesc().MipLevels;
-            m_pDevice->CreateShaderResourceView(pResource, &srvDesc, cpuHandle);
-        }
     }
 
     uint32 DescriptorHeap::GetNextAvailableDescriptor(bool bLoop)

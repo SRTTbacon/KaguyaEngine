@@ -35,10 +35,12 @@
 #include "Engine\\3D\\PostProcess\\Core\\PostProcessManager.h"
 #include "Engine\\3D\\Material\\PrimitiveMaterial.h"
 #include "Engine\\3D\\Material\\BoneMaterial.h"
+#include "Engine\\3D\\Material\\OtherMaterials\\MovieMaterial.h"
 #include "Engine\\3D\\Material\\Core\\MaterialManager.h"
 #include "Engine\\3D\\Model\\Core\\ModelManager.h"
 #include "Engine\\3D\\Model\\PrimitiveModel.h"
 #include "Engine\\3D\\Model\\CharacterModel.h"
+#include "Engine\\3D\\Model\\OtherModels\\MovieModel.h"
 #include "Engine\\3D\\Lights\\DirectionalLight.h"
 #include "Engine\\3D\\Skybox\\SkyBox.h"
 
