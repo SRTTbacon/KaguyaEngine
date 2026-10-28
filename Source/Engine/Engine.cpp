@@ -239,6 +239,9 @@ void Engine::LateUpdate()
 		{
 			return *a < *b;
 		});
+
+	// 動画のデコード処理を実行
+	m_pVideoAcceration->EndVideoCommand();
 }
 
 void Engine::UpdateCamera(Camera* pCamera)
@@ -353,9 +356,6 @@ void Engine::Begin3DRender()
 
 	ID3D12DescriptorHeap* ppHeaps[] = { m_pCopyDescriptor->pCopyHeap->GetHeap() };
 	GetCommandList()->SetDescriptorHeaps(1, ppHeaps);
-
-	// 動画のデコード処理を実行
-	m_pVideoAcceration->EndVideoCommand();
 
 	// 3Dモデルの描画前に行う処理
 	m_pModelManager->BeforeDrawUpdate();

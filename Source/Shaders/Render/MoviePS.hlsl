@@ -41,7 +41,14 @@ PSOutput main(VSOutput input)
     // 速度計算
     float2 currNDC = input.projPos.xy / input.projPos.w;
     float2 prevNDC = input.projPosPrev.xy / input.projPosPrev.w;
-    output.velocity = currNDC - prevNDC;
+    float2 velocityNDC = currNDC - prevNDC;
+    
+    float2 velocityUV = velocityNDC * float2(0.5f, -0.5f);
+
+    // NDC → ピクセル単位
+    float2 velocityPixels = velocityNDC * commonBuffer.RenderSize;
+
+    output.velocity = velocityPixels;
 
     return output;
 }

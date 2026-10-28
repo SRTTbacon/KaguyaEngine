@@ -1,6 +1,7 @@
 //*****************************************************************************
 //
 // 動画(mp4想定)ファイルをデコードし、指定したリソースに書き込むクラス
+// https://github.com/turanszkij/mini_video
 //
 // Movie.h
 //
@@ -12,9 +13,9 @@
 
 #pragma once
 
-#include "..\\..\\..\\Library\\mp4\\common.h"
 #include "..\\CoreMinimal.h"
 #include "..\\FrameBuffer.h"
+#include "..\\..\\..\\Library\\mp4\\common.h"
 
 #include <d3d12video.h>
 #include <dxva.h>
@@ -36,7 +37,7 @@ namespace KaguyaEngine::Core
 
 		void UpdateVideo();
 
-		void BeforeDrawUpdate();
+		void BeforeDrawUpdate(uint32 srvIndex);
 		void AfterDrawUpdate();
 
 	public:
@@ -47,6 +48,32 @@ namespace KaguyaEngine::Core
 		float m_speed;
 		bool m_bPaused;
 		bool m_bLoop;
+
+	private:
+		struct DecodeResultReordered
+		{
+			ComPtr<ID3D12Resource> texture;
+			int display_order = -1;
+			int frame_index = 0;
+			void create(ID3D12Device* device, uint32_t padded_width, uint32_t padded_height)
+			{
+				D3D12_RESOURCE_DESC desc = {};
+				desc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+				desc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+				desc.Format = DXGI_FORMAT_NV12;
+				desc.Width = padded_width;
+				desc.Height = padded_height;
+				desc.DepthOrArraySize = 1;
+				desc.SampleDesc.Count = 1;
+				desc.MipLevels = 1;
+				D3D12_HEAP_PROPERTIES heap_properties = {};
+				heap_properties.Type = D3D12_HEAP_TYPE_DEFAULT;
+				HRESULT hr = device->CreateCommittedResource(&heap_properties, D3D12_HEAP_FLAG_NONE, &desc, D3D12_RESOURCE_STATE_COMMON, nullptr, IID_PPV_ARGS(&texture));
+				assert(SUCCEEDED(hr));
+				hr = texture->SetName(L"DecodeResultReordered::texture");
+				assert(SUCCEEDED(hr));
+			}
+		};
 
 	private:
 		static uint32 MovieMeshCount;
@@ -63,7 +90,11 @@ namespace KaguyaEngine::Core
 
 		ComPtr<ID3D12Resource> m_pOutputTexture;
 
-		D3D12_RESOURCE_STATES dpb_layouts[17] = {};
+		std::vector<DecodeResultReordered> m_reorderedResultsFree; // free image slots that can be reused as reordering image displaying
+		std::vector<DecodeResultReordered> m_reorderedResultsWorking; // image slots that are currently in use for reordering
+		DecodeResultReordered m_displayedImage; // the latest reordered picture
+
+		D3D12_RESOURCE_STATES m_dpbLayouts[17];
 
 		uint32 m_width;
 		uint32 m_height;
@@ -72,6 +103,7 @@ namespace KaguyaEngine::Core
 
 		bool m_bLoaded;
 		bool m_bReferenceOnlyAllocation;
+		bool m_bMustDecode;
 
 		void DecodeFrame();
 

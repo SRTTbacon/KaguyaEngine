@@ -31,22 +31,14 @@ namespace KaguyaEngine::PostProcess
 		, m_pTAAPipelineState(nullptr)
 	{
 		m_rtvStartIndex = m_pRtvHeap->GetNextAvailableDescriptor(static_cast<uint32>(_countof(m_historyRenderTarget)));
-
-		//m_cbTAAResolve.Resolution = XMFLOAT2(0.0f, 0.0f);
-		m_cbTAAResolve.Resolution = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-		//m_cbTAAResolve.Jitter = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-		m_cbTAAResolve.Jitter = XMFLOAT2(0.0f, 0.0f);
-		m_cbTAAResolve.FrameNumber = 0;
-		m_cbTAAResolve.DebugFlags = 0; // AllowLongestVelocityVector | AllowNeighbourhoodSampling | AllowYCoCg | AllowVarianceClipping | AllowBicubicFilter | AllowDepthThreshold | MarkNoHistoryPixels
 	}
 
 	void PTAA::Initialize(bool bFirstInit)
 	{
 		uint32 renderTargetCount = static_cast<uint32>(_countof(m_historyRenderTarget));
 
-		// m_pDescriptorはコンストラクタではまだnullptrなので、ここで初めてSRVの開始位置を取得する
-		if (bFirstInit)
-		{
+		// m_pDescriptorはコンストラクタではまだnullptrなので、ここでSRVの開始位置を取得する
+		if (bFirstInit) {
 			m_srvStartIndex = m_pDescriptor->pMainHeap->GetNextAvailableDescriptor(renderTargetCount * 2);
 		}
 
@@ -61,17 +53,11 @@ namespace KaguyaEngine::PostProcess
 			SetUAVResource(m_historyRenderTarget[i], m_srvStartIndex + i * 2 + 1);
 		}
 
-		// CBを初期化
-		XMUINT2 renderSize = m_pCamera->GetRenderSize();
-		//m_cbTAAResolve.Resolution = XMFLOAT2(1.0f / static_cast<float>(renderSize.x), 1.0f / static_cast<float>(renderSize.y));
-		m_cbTAAResolve.Resolution = XMFLOAT4(static_cast<float>(renderSize.x), static_cast<float>(renderSize.y), 1.0f / static_cast<float>(renderSize.x), 1.0f / static_cast<float>(renderSize.y));
-
 		if (bFirstInit)
 		{ 
 			// RootSignatureの作成
 			CD3DX12_DESCRIPTOR_RANGE srvRange{};
 			srvRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 3, 0); // t0 - t2
-			//srvRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 5, 0); // t0 - t4
 			CD3DX12_DESCRIPTOR_RANGE uavRange{};
 			uavRange.Init(D3D12_DESCRIPTOR_RANGE_TYPE_UAV, 1, 0); // u0
 
@@ -79,12 +65,11 @@ namespace KaguyaEngine::PostProcess
 
 			rootParams[0].InitAsDescriptorTable(1, &srvRange, D3D12_SHADER_VISIBILITY_ALL);
 			rootParams[1].InitAsDescriptorTable(1, &uavRange, D3D12_SHADER_VISIBILITY_ALL);
-			//rootParams[2].InitAsConstants(sizeof(CBTAAResolve) / sizeof(uint32), 0, 0, D3D12_SHADER_VISIBILITY_ALL);
 
 			CD3DX12_STATIC_SAMPLER_DESC sampler(0, D3D12_FILTER_MIN_MAG_MIP_LINEAR, D3D12_TEXTURE_ADDRESS_MODE_CLAMP, D3D12_TEXTURE_ADDRESS_MODE_CLAMP, D3D12_TEXTURE_ADDRESS_MODE_CLAMP);
 
 			PsoDescKey desc{};
-			desc.csShaderPath = GetShaderPath("TAATestCS.cso");
+			desc.csShaderPath = GetShaderPath("TAACS.cso");
 
 			uint64 ShaderHash = GetShaderHash(desc.csShaderPath, "");
 			m_pTAARootSignature = RootSignature::CreateRootSignature(m_pDevice, ShaderHash, rootParams, _countof(rootParams), &sampler, 1);
@@ -94,23 +79,16 @@ namespace KaguyaEngine::PostProcess
 
 	void PTAA::Render(RenderResource& mainRenderTarget)
 	{
-		// CBを更新
-		m_cbTAAResolve.Jitter.x = m_pCamera->GetJitter().x;
-		m_cbTAAResolve.Jitter.y = m_pCamera->GetJitter().y;
-		//m_cbTAAResolve.Jitter.z = m_pCamera->GetJitterPrev().x;
-		//m_cbTAAResolve.Jitter.w = m_pCamera->GetJitterPrev().y;
-
-		m_cbTAAResolve.FrameNumber++;
-
 		uint8 prevHistoryIndex = m_currentHistoryIndex;
-		m_currentHistoryIndex = (m_currentHistoryIndex + 1) % _countof(m_historyRenderTarget);
+		m_currentHistoryIndex = static_cast<uint8>((m_currentHistoryIndex + 1)) % _countof(m_historyRenderTarget);
+
+		const PPResource& prevResource = m_historyRenderTarget[prevHistoryIndex];
+		const PPResource& currResource = m_historyRenderTarget[m_currentHistoryIndex];
 
 		ID3D12Resource* pResources[] = {
 			mainRenderTarget.pResource,
-			m_historyRenderTarget[prevHistoryIndex].pResource.Get(),
+			prevResource.pResource.Get(),
 			m_pCameraResource->velocityResource.pResource,
-			//m_pCameraResource->depthResource.pResource,
-			//m_pCameraResource->prevDepthResource.pResource
 		};
 
 		// リソースバリアをTAA用に変更
@@ -118,56 +96,51 @@ namespace KaguyaEngine::PostProcess
 		for (int i = 0; i < _countof(pResources); i++) {
 			ChangeBarrier(pResources[i], D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, barriers);
 		}
-		ChangeBarrier(m_historyRenderTarget[m_currentHistoryIndex].pResource.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, barriers);
-		GetCommandList()->ResourceBarrier(static_cast<UINT>(barriers.size()), barriers.data());
+		ChangeBarrier(currResource.pResource.Get(), D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS, barriers);
+		GetCommandList()->ResourceBarrier(static_cast<uint32>(barriers.size()), barriers.data());
 		barriers.clear();
 
 		// SRVをコピー
-		//uint32 copyIndex = m_pDescriptor->pCopyHeap->GetNextAvailableDescriptor(4U);
-		uint32 copyIndex = m_pDescriptor->pCopyHeap->GetNextAvailableDescriptor(6U);
-		//uint32 uavCopyIndex = copyIndex + 3;
-		uint32 uavCopyIndex = copyIndex + 5;
+		uint32 copyIndex = m_pDescriptor->pCopyHeap->GetNextAvailableDescriptor(4U);
+		uint32 uavCopyIndex = copyIndex + 3;
 		CopyDescriptors(1, mainRenderTarget.mainSrvIndex, copyIndex + 0);
-		CopyDescriptors(1, m_historyRenderTarget[prevHistoryIndex].mainSrvIndex, copyIndex + 1);
+		CopyDescriptors(1, prevResource.mainSrvIndex, copyIndex + 1);
 		CopyDescriptors(1, m_pCameraResource->velocityResource.mainSrvIndex, copyIndex + 2);
-		//CopyDescriptors(1, m_pCameraResource->depthResource.mainSrvIndex, copyIndex + 3);
-		//CopyDescriptors(1, m_pCameraResource->prevDepthResource.mainSrvIndex, copyIndex + 4);
-		CopyDescriptors(1, m_historyRenderTarget[m_currentHistoryIndex].mainUavIndex, uavCopyIndex);
+		CopyDescriptors(1, currResource.mainUavIndex, uavCopyIndex);
 
 		// パイプラインを設定
 		GetCommandList()->SetPipelineState(m_pTAAPipelineState);
 		GetCommandList()->SetComputeRootSignature(m_pTAARootSignature);
 		GetCommandList()->SetComputeRootDescriptorTable(0, m_pDescriptor->pCopyHeap->GetGpuDescriptorHandle(copyIndex));
 		GetCommandList()->SetComputeRootDescriptorTable(1, m_pDescriptor->pCopyHeap->GetGpuDescriptorHandle(uavCopyIndex));
-		//GetCommandList()->SetComputeRoot32BitConstants(2, sizeof(CBTAAResolve) / sizeof(uint32), &m_cbTAAResolve, 0);
 
-		// ディスパッチ
-		const UINT width = m_pCamera->GetRenderSize().x;
-		const UINT height = m_pCamera->GetRenderSize().y;
-
+		// 描画
+		const uint32 width = m_pCamera->GetRenderSize().x;
+		const uint32 height = m_pCamera->GetRenderSize().y;
 		GetCommandList()->Dispatch((width + 7) / 8, (height + 7) / 8, 1);
 
 		// リソースバリアを戻す
 		for (int i = 0; i < _countof(pResources); i++) {
 			ChangeBarrier(pResources[i], D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, barriers);
 		}
-		ChangeBarrier(m_historyRenderTarget[m_currentHistoryIndex].pResource.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, barriers);
-		GetCommandList()->ResourceBarrier(static_cast<UINT>(barriers.size()), barriers.data());
-		barriers.clear();
+		ChangeBarrier(currResource.pResource.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE, barriers);
+		GetCommandList()->ResourceBarrier(static_cast<uint32>(barriers.size()), barriers.data());
 	}
 
 	RenderResource PTAA::GetResultRenderTarget() const
 	{
 		RenderResource outResource{};
+		const PPResource& inResource = m_historyRenderTarget[m_currentHistoryIndex];
 
-		outResource.pResource = m_historyRenderTarget[m_currentHistoryIndex].pResource.Get();
-		outResource.mainSrvHandleCPU = m_pDescriptor->pMainHeap->GetCpuDescriptorHandle(m_historyRenderTarget[m_currentHistoryIndex].mainSrvIndex);
-		outResource.mainSrvHandleGPU = m_pDescriptor->pMainHeap->GetGpuDescriptorHandle(m_historyRenderTarget[m_currentHistoryIndex].mainSrvIndex);
+		// PPResourceをRenderResourceに変換
+		outResource.pResource = inResource.pResource.Get();
+		outResource.mainSrvHandleCPU = m_pDescriptor->pMainHeap->GetCpuDescriptorHandle(inResource.mainSrvIndex);
+		outResource.mainSrvHandleGPU = m_pDescriptor->pMainHeap->GetGpuDescriptorHandle(inResource.mainSrvIndex);
 		uint32 copyIndex = m_pDescriptor->pCopyHeap->GetNextAvailableDescriptor();
 		CopyDescriptors(1, outResource.mainSrvHandleCPU, copyIndex);
 		outResource.copySrvHandleCPU = m_pDescriptor->pCopyHeap->GetCpuDescriptorHandle(copyIndex);
 		outResource.copySrvHandleGPU = m_pDescriptor->pCopyHeap->GetGpuDescriptorHandle(copyIndex);
-		outResource.mainSrvIndex = m_historyRenderTarget[m_currentHistoryIndex].mainSrvIndex;
+		outResource.mainSrvIndex = inResource.mainSrvIndex;
 
 		return outResource;
 	}

@@ -22,11 +22,11 @@ namespace KaguyaEngine::Model
 
 			CreatePrimitiveQuad();
 
-			ObjectPtr<MovieMaterial> pMovieMaterial = g_Engine->GetMaterialManager()->CreateMaterial<MovieMaterial>();
-			pMovieMaterial->SetMaterialName("MovieMaterial");
-			pMovieMaterial->Initialize();
-			pMovieMaterial->SetNV12Texture(m_movie.GetOutputTexture());
-			m_pMeshes[0]->SetMaterial(pMovieMaterial.get());
+			m_pMovieMaterial = g_Engine->GetMaterialManager()->CreateMaterial<MovieMaterial>();
+			m_pMovieMaterial->SetMaterialName("MovieMaterial");
+			m_pMovieMaterial->Initialize();
+			//pMovieMaterial->SetNV12Texture(m_movie.GetOutputTexture());
+			m_pMeshes[0]->SetMaterial(m_pMovieMaterial.get());
 
 			m_bLoaded = true;
 		}
@@ -38,7 +38,7 @@ namespace KaguyaEngine::Model
 
 	void MovieModel::BeforeDrawUpdate()
 	{
-		m_movie.BeforeDrawUpdate();
+		m_movie.BeforeDrawUpdate(m_pMovieMaterial->GetMovieTextureMainSrvIndex());
 	}
 
 	void MovieModel::AfterDrawUpdate()

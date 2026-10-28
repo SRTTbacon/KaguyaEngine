@@ -61,12 +61,12 @@ void SceneDebug::Start()
 			pMaterial->Initialize();
 			m_pModel2->GetMesh(0)->SetMaterial(pMaterial);
 		});
-	m_pModel2->AddRotationX(180.0f);
 
 	m_pMovieModel1 = g_Engine->GetModelManager()->CreateModel<MovieModel>();
 	m_pMovieModel1->LoadMovie("Resource/Test.mp4");
 	m_pMovieModel1->m_scale = XMFLOAT3(1.92f, 1.08f, 0.01f);
 	m_pMovieModel1->m_position = XMFLOAT3(2.0f, 0.0f, 2.0f);
+	m_pMovieModel1->AddRotationY(180.0f);
 
 	m_pCharacter1 = g_Engine->GetModelManager()->CreateModel<CharacterModel>();
 	m_pCharacter1->AddRotationX(180.0f);
@@ -156,7 +156,7 @@ void SceneDebug::Update()
 
 	if (g_Engine->GetInput()->GetKeyStateSync(DIK_B))
 	{
-		g_Engine->GetMainCamera()->m_bPostProcessEnable = !g_Engine->GetMainCamera()->m_bPostProcessEnable;
+		//g_Engine->GetMainCamera()->m_bPostProcessEnable = !g_Engine->GetMainCamera()->m_bPostProcessEnable;
 	}
 
 	if (m_pCharacter1 && m_pCharacter1->IsLoaded())

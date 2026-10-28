@@ -20,6 +20,10 @@ namespace KaguyaEngine::Core
 {
 	class VideoAcceration;
 }
+namespace KaguyaEngine::Material
+{
+	class MovieMaterial;
+}
 
 namespace KaguyaEngine::Model
 {
@@ -35,8 +39,13 @@ namespace KaguyaEngine::Model
 		virtual void BeforeDrawUpdate() override;
 		virtual void AfterDrawUpdate() override;
 
+	public:
+		inline KaguyaEngine::Core::Movie& GetMovie() { return m_movie; }
+
 	protected:
 		ComPtr<ID3D12Resource> m_pNV12Texture;
+
+		ObjectPtr<KaguyaEngine::Material::MovieMaterial> m_pMovieMaterial;
 
 		KaguyaEngine::Core::Movie m_movie;
 	};

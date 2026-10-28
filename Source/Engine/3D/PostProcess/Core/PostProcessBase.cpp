@@ -70,7 +70,7 @@ namespace KaguyaEngine::PostProcess
 		DirectX::XMINT2 renderSize(m_pCamera->m_renderScissor.right - m_pCamera->m_renderScissor.left, m_pCamera->m_renderScissor.bottom - m_pCamera->m_renderScissor.top);
 
         //中間テクスチャをフレーム数分作成
-        D3D12_RESOURCE_DESC desc2 = CD3DX12_RESOURCE_DESC::Tex2D(format, static_cast<UINT64>(renderSize.x / division), static_cast<UINT>(renderSize.y / division));
+        D3D12_RESOURCE_DESC desc2 = CD3DX12_RESOURCE_DESC::Tex2D(format, static_cast<uint64>(renderSize.x / division), static_cast<uint32>(renderSize.y / division));
         desc2.SampleDesc.Count = 1;
         desc2.MipLevels = 1;
         desc2.Flags = D3D12_RESOURCE_FLAG_ALLOW_RENDER_TARGET | D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS;
@@ -139,7 +139,7 @@ namespace KaguyaEngine::PostProcess
         viewPort.Width = static_cast<float>(viewportSize.x);
         viewPort.Height = static_cast<float>(viewportSize.y);
         GetCommandList()->RSSetViewports(1, &viewPort);
-        CD3DX12_RECT scissorRect = CD3DX12_RECT(0, 0, static_cast<LONG>(viewportSize.x), static_cast<LONG>(viewportSize.y));
+        CD3DX12_RECT scissorRect = CD3DX12_RECT(0, 0, static_cast<int>(viewportSize.x), static_cast<int>(viewportSize.y));
         GetCommandList()->RSSetScissorRects(1, &scissorRect);
     }
     void PostProcessBase::CopyDescriptors(uint32 count, uint32 srcIndex, uint32 destIndex) const

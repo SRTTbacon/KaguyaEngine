@@ -31,6 +31,9 @@ namespace KaguyaEngine::Material
 		virtual void LateUpdate() override;
 		virtual void Draw() override;
 
+	public:
+		inline uint32 GetMovieTextureMainSrvIndex() const { return movieTextureMainSrvIndex; }
+
 	protected:
 		virtual void CreatePipeline() override;
 		virtual void CreateUniquePSBuffer() override;

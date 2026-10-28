@@ -1,4 +1,5 @@
 #pragma once
+
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
@@ -10,7 +11,6 @@
 
 static_assert(sizeof(void*) == sizeof(uint64_t), "Error: only 64-bit build is supported!");
 
-#define MINIMP4_IMPLEMENTATION
 #include "minimp4.h"	// mp4 -> h264 extraction
 #include "h264.h"		// h264 parsing
 
@@ -27,8 +27,7 @@ struct Video
 	std::vector<h264::SPS> sps_array; // array of h264 Picture Parameter Sets, usually there is only one
 	std::vector<h264::PPS> pps_array; // array of h264 Sequence Parameter Sets, usually there is only one
 	std::vector<h264::SliceHeader> slice_headers; // array of h264 Slice Headers, there are as many of them as video frames
-	float timestamp_seconds = 0.0f; // whole video duration in seconds
-	float duration_seconds = 0.0f; // whole video duration in seconds
+	float duration_seconds = 0; // whole video duration in seconds
 	struct FrameInfo
 	{
 		uint64_t offset = 0;
@@ -50,16 +49,23 @@ struct Video
 	{
 		std::chrono::high_resolution_clock::time_point timestamp = std::chrono::high_resolution_clock::now();
 		inline void record() { timestamp = std::chrono::high_resolution_clock::now(); }
-		inline float elapsed_seconds() const { return std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - timestamp).count(); }
+		inline float elapsed_seconds() { return std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - timestamp).count(); }
 	} timer; // the timer is used to time the swapping of displayed pictures
 	int target_display_order = 0; // the next FrameInfo::display_order that must be displayed
 
-	// Decoded Picture Buffer (DPB) state:
-	int poc_status[17] = {}; // tracking the PictureOrderCount for every used DPB slot
-	int framenum_status[17] = {}; // tracking the frame index for every used DPB slot
-	std::vector<uint8_t> reference_usage; // tracking the state of reference frames
-	uint8_t next_ref = 0;
-	uint8_t next_slot = 0;
+	// Decoded Picture Buffer (DPB) state.
+	// reference_usage / *_status describe the references used to decode the current picture (before marking).
+	// dpb[] is the marked reference set left behind for the next picture.
+	struct DpbEntry
+	{
+		bool used = false;
+		int frame_num = 0;
+		int poc = 0;
+	};
+	DpbEntry dpb[17] = {};
+	int poc_status[17] = {};
+	int framenum_status[17] = {};
+	std::vector<uint8_t> reference_usage;
 	uint8_t current_slot = 0;
 
 	// File loading helpers:
@@ -70,8 +76,33 @@ struct Video
 	// Load from raw H264 data file (prefixed with 0,0,0,1 or 0,0,1 NAL unit start codes)
 	bool Load_h264_raw(const char* filename, float framerate = 60.0f);
 
-	// Calculate the frame reordering based on the H264 info:
+	static void RefIdxActive(const h264::SliceHeader& sh, const h264::PPS& pps, int& l0, int& l1)
+	{
+		l0 = pps.num_ref_idx_l0_active_minus1;
+		l1 = pps.num_ref_idx_l1_active_minus1;
+		if (sh.num_ref_idx_active_override_flag)
+		{
+			l0 = sh.num_ref_idx_l0_active_minus1;
+			if (h264::is_slice_type(sh.slice_type, h264::SH_SLICE_TYPE_B))
+				l1 = sh.num_ref_idx_l1_active_minus1;
+		}
+	}
+
 	void CalculateFrameDisplayOrder();
+
+	static int PicNum(int frame_num, int curr, int max_frame_num)
+	{
+		return frame_num > curr ? frame_num - max_frame_num : frame_num;
+	}
+
+	int CountUsed() const;
+
+	void ClearDpb();
+
+	void BeginDecodePicture(int frame_index);
+
+	void EndDecodePicture(int frame_index);
+
 };
 
 // Other helpers:
@@ -127,4 +158,3 @@ inline unsigned long firstbitlow(unsigned int value)
 
 // DirectX Shader Compiler library is used for Vulkan and DirectX shader compilation:
 #include "dxcapi.h"
-

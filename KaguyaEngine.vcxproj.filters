@@ -104,9 +104,6 @@
     <Filter Include="Source\Engine\3D\PostProcess\AntiAliasing">
       <UniqueIdentifier>{195f08e1-04a3-459f-92b6-73e136077d20}</UniqueIdentifier>
     </Filter>
-    <Filter Include="リソース ファイル\PostProcess\IntelTAA">
-      <UniqueIdentifier>{ce39168f-93d7-41ce-a50e-0171dd52d2f2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source\Library">
       <UniqueIdentifier>{ecc64cd5-2689-4766-83fe-e327424664d0}</UniqueIdentifier>
     </Filter>
@@ -121,6 +118,9 @@
     </Filter>
     <Filter Include="Source\Engine\3D\Material\OtherMaterials">
       <UniqueIdentifier>{6ec9d6ff-e6a9-409b-b79f-c5dd4b6de24e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\PostProcess\TAA">
+      <UniqueIdentifier>{ce39168f-93d7-41ce-a50e-0171dd52d2f2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -426,12 +426,6 @@
     <ClCompile Include="Source\Engine\3D\PostProcess\AntiAliasing\TAA.cpp">
       <Filter>Source\Engine\3D\PostProcess\AntiAliasing</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Library\mp4\common.cpp">
-      <Filter>Source\Library\mp4</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Library\mp4\minimp4.cpp">
-      <Filter>Source\Library\mp4</Filter>
-    </ClCompile>
     <ClCompile Include="Source\Engine\Core\Movie\Movie.cpp">
       <Filter>Source\Engine\Core\Movie</Filter>
     </ClCompile>
@@ -443,6 +437,9 @@
     </ClCompile>
     <ClCompile Include="Source\Engine\3D\Material\OtherMaterials\MovieMaterial.cpp">
       <Filter>Source\Engine\3D\Material\OtherMaterials</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Library\mp4\common.cpp">
+      <Filter>Source\Library\mp4</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -497,35 +494,20 @@
     <FxCompile Include="Source\Shaders\PostProcess\UpSamplePS.hlsl">
       <Filter>リソース ファイル\PostProcess</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shaders\PostProcess\IntelTAA\TAATestCS.hlsl">
-      <Filter>リソース ファイル\PostProcess\IntelTAA</Filter>
-    </FxCompile>
     <FxCompile Include="Source\Shaders\Render\DeferredLightingVS.hlsl">
       <Filter>リソース ファイル\Render</Filter>
     </FxCompile>
     <FxCompile Include="Source\Shaders\Render\DeferredLightingPS.hlsl">
       <Filter>リソース ファイル\Render</Filter>
     </FxCompile>
-    <FxCompile Include="Source\Shaders\PostProcess\IntelTAA\TAAResolveCS.hlsl">
-      <Filter>リソース ファイル\PostProcess\IntelTAA</Filter>
-    </FxCompile>
     <FxCompile Include="Source\Shaders\Render\MoviePS.hlsl">
       <Filter>リソース ファイル\Render</Filter>
+    </FxCompile>
+    <FxCompile Include="Source\Shaders\PostProcess\TAA\TAACS.hlsl">
+      <Filter>リソース ファイル\PostProcess\TAA</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Source\Shaders\PostProcess\IntelTAA\ColorSpaceUtility.hlsli">
-      <Filter>リソース ファイル\PostProcess\IntelTAA</Filter>
-    </None>
-    <None Include="Source\Shaders\PostProcess\IntelTAA\PixelPacking_R11G11B10.hlsli">
-      <Filter>リソース ファイル\PostProcess\IntelTAA</Filter>
-    </None>
-    <None Include="Source\Shaders\PostProcess\IntelTAA\PixelPacking_Velocity.hlsli">
-      <Filter>リソース ファイル\PostProcess\IntelTAA</Filter>
-    </None>
-    <None Include="Source\Shaders\PostProcess\IntelTAA\TemporalRS.hlsli">
-      <Filter>リソース ファイル\PostProcess\IntelTAA</Filter>
-    </None>
   </ItemGroup>
 </Project>
